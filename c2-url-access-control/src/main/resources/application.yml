@@ -1,0 +1,8 @@
+debug: true
+server.port: 8080
+logging:
+  level:
+    root: debug
+    org.springframework.web: info
+    org.apache.coyote.http11.Http11InputBuffer: debug
+  pattern.console: '[%blue(%d{mm:ss.SSS})][%yellow(%thread)][%green(%50logger{50})][%highlight(%-5level)]: %msg\n'

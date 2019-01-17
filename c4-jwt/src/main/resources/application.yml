@@ -1,0 +1,19 @@
+debug: true
+server:
+  port: 8080
+  servlet.session.persistent: false
+logging:
+  level:
+    root: info
+    org.springframework.web: info
+    org.apache.coyote.http11.Http11InputBuffer: debug
+  pattern.console: '[%blue(%d{mm:ss.SSS})][%yellow(%thread)][%green(%50logger{50})][%highlight(%-5level)]: %msg\n'
+jwt:
+  tokenHeaderName: Authorization
+  tokenPrefix: "Bearer "
+  secret: 123456
+  expiration: 604800
+  route:
+    authentication:
+      path: auth
+      refresh: refresh
