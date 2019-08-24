@@ -12,6 +12,7 @@
         <module>c2-url-access-control</module>
         <module>c3-aop-rbac</module>
         <module>c4-jwt</module>
+        <module>c5-custom-expression</module>
     </modules>
     <packaging>pom</packaging>
 

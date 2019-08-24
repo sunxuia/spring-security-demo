@@ -1,15 +1,12 @@
 package net.sunxu.study.c1;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sunxu.study.c0.CustomUserDetails;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
 
 /**
  * 不同的权限可以访问到的方法不同
@@ -227,13 +224,34 @@ public class AuthorizeController {
 
     /**
      * hasPermission 的权限检查. 通过标识符和类型获得对象, 然后检查用户对该对象是否具有权限来判断是否可以访问.
+     * 通过"#参数名" 传入方法的参数.
      *
      * @return
      */
     @GetMapping("/has-permission-w-3-args")
-    @PreAuthorize("hasPermission(1L, 'java.lang.String', 'read')")
-    public String hasPermissionW3Args() {
+    @PreAuthorize("hasPermission(#number, 'java.lang.String', 'read')")
+    public String hasPermissionW3Args(Long number) {
         return "hasPermissionW3Args";
+    }
+
+    /**
+     * 使用自定义的权限验证方法. 通过"@beanName.methodName(arguments)" 的方式调用方法进行验证.
+     * 通过"#参数名" 传入方法的参数.
+     *
+     * @return
+     */
+    @GetMapping("/custom-method")
+    @PreAuthorize("@authorizeController.customVerifyMethod(principal, #userName)")
+    public String customMethod(@RequestParam String userName) {
+        return "customMethod";
+    }
+
+    // 自定义的验证表达式, 方法返回true 表示权限验证通过, false 表示权限验证失败.
+    public boolean customVerifyMethod(Object principal, String userName) {
+        return principal != null
+                && (principal instanceof String && principal.equals(userName)
+                || (principal instanceof CustomUserDetails
+                && ((CustomUserDetails) principal).getUsername().equals(userName)));
     }
 
     //endregion
@@ -253,7 +271,6 @@ public class AuthorizeController {
     }
 
     private int postAuthorizeVisitCount = 0;
-
 
     //endregion
 }

@@ -1,16 +1,14 @@
 package net.sunxu.study.c1;
 
-import org.springframework.context.annotation.Configuration;
+import java.io.Serializable;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-
-import java.io.Serializable;
-import java.security.Principal;
+import org.springframework.stereotype.Component;
 
 /**
- * spring security hasPermission 表达式自定义验证
+ * spring security hasPermission 表达式的自定义验证
  */
-@Configuration
+@Component
 public class MyPermissionEvaluator implements PermissionEvaluator {
 
     /**

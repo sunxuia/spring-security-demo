@@ -1,5 +1,10 @@
 package net.sunxu.study.rbac;
 
+import static java.util.stream.Collectors.toList;
+
+import java.lang.reflect.Method;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import net.sunxu.study.c0.CustomUserDetails;
 import org.apache.logging.log4j.util.Strings;
 import org.aspectj.lang.JoinPoint;
@@ -16,12 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * 进行权限判断的拦截类
@@ -66,18 +65,21 @@ public class RbacAspect {
         Resource[] methodResources = targetMethod.getAnnotationsByType(Resource.class);
         boolean hasAuthorization = false;
         if (methodResources.length == 0) {
+            // 注解在方法上
             for (int i = 0; i < classResources.length && !hasAuthorization; i++) {
                 hasAuthorization = availableResources.contains(classResources[i].value());
             }
         } else if (classResources.length == 0) {
+            // 注解在类上
             for (int i = 0; i < methodResources.length && !hasAuthorization; i++) {
                 hasAuthorization = availableResources.contains(methodResources[i].value());
             }
         } else {
+            // 注解在方法和类上
             for (int i = 0; i < classResources.length && !hasAuthorization; i++) {
-                for (int j = 0; j < methodResources.length && !hasAuthorization; i++) {
+                for (int j = 0; j < methodResources.length && !hasAuthorization; j++) {
                     hasAuthorization = availableResources.contains(
-                            classResources[i].value() + "." + methodResources[i].value());
+                            classResources[i].value() + "." + methodResources[j].value());
                 }
             }
         }

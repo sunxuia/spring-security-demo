@@ -1,5 +1,11 @@
 package net.sunxu.study.c1;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Collections;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -239,12 +237,22 @@ public class AuthorizeControllerTests {
 
     @Test
     public void hasPermissionW3Args_anonymous_access() throws Exception {
-        expectAccess(anonymous(), "/has-permission-w-3-args", "hasPermissionW3Args");
+        expectAccess(anonymous(), "/has-permission-w-3-args?number=1", "hasPermissionW3Args");
     }
 
     @Test
     public void hasPermissionW3Args_authenticated_forbid() throws Exception {
-        expectForbid(authenticated(), "/has-permission-w-3-args");
+        expectForbid(authenticated(), "/has-permission-w-3-args?number=1");
+    }
+
+    @Test
+    public void customMethod_userSameName_access() throws Exception {
+        expectAccess(authenticated(), "/custom-method?userName=admin", "customMethod");
+    }
+
+    @Test
+    public void customMethod_userNotSameName_forbidden() throws Exception {
+        expectForbid(anonymous(), "/custom-method?userName=admin");
     }
 
     @Test
